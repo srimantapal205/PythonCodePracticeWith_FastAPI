@@ -55,6 +55,19 @@ async  def get_read_author_category_by_query(book_author: str, category:str):
     if not book_return: return {"error": "No books found for this author in this category"}
     return book_return
 
+# Create a new API Endpoint that can fetch all books from a specific author using either Path Parameters or Query Parameters.
+# Get books by author using query parameter
+@app.get("/booklist/by_author")
+async def get_books_by_author_query(author:str):
+    books_to_return = []
+    for book in BOOKS:
+        if book.get('author').casefold() == author.casefold():
+            books_to_return.append(book)
+    if not books_to_return:
+        return {"error": "No books found for this author"}
+    return  books_to_return
+
+
 
 # Create a new book using POST method
 @app.post("/booksList/create_book")
@@ -71,4 +84,13 @@ async  def update_book(updated_book= Body()):
             BOOKS[i] = updated_book
     return  {"message": "Book updated successfully", "book": updated_book}
 
+
+# Delete a book using DELETE method
+@app.delete("/booksList/delete_book/{book_title")
+async def delete_book(book_title:str):
+    for i in range(len(BOOKS)):
+        if BOOKS[i].get('title').casefold() == book_title.casefold():
+            BOOKS.pop(i)
+            break
+    return {"message": f"Book deleted successfully,", "BOOKS":BOOKS}
 
