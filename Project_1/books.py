@@ -11,7 +11,6 @@ BOOKS = [
     {'title': 'Title Six', 'author': 'Author Two', 'category': 'math'}
 ]
 
-
 @app.get("/booksList")
 async def get_books():
     return BOOKS
@@ -20,9 +19,18 @@ async def get_books():
 # async def get_books():
 #     return {"book_title": 'My favorite book'}
 
-@app.get("/booksList/{dynamic_param}")
-async def get_books(dynamic_param:str):
-    return {"dynamic_param": dynamic_param}
+# @app.get("/booksList/{dynamic_param}")
+# async def get_books(dynamic_param:str):
+#     return {"dynamic_param": dynamic_param}
+
+
+@app.get("/booksList/{book_title}")
+async def get_books(book_title:str):
+    for book in BOOKS:
+        if book.get('title').casefold() == book_title.casefold():
+            return book
+    return {"error": "Book not found"}
+
 
 
 
