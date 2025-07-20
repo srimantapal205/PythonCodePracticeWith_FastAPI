@@ -15,3 +15,14 @@ BOOKS = [
 @app.get("/booksList")
 async def get_books():
     return BOOKS
+
+# @app.get("/booksList/mybook")
+# async def get_books():
+#     return {"book_title": 'My favorite book'}
+
+@app.get("/booksList/{dynamic_param}")
+async def get_books(dynamic_param:str):
+    return {"dynamic_param": dynamic_param}
+
+
+
