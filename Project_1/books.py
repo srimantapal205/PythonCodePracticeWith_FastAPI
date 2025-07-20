@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import Body, FastAPI
 
 app = FastAPI()
 
@@ -44,7 +44,7 @@ async  def get_read_category_by_query(category:str):
     return books_to_return
 
 
-# Get books by category using query parameter
+# Get books by author and category using query parameters
 @app.get("/booklist/{book_author}/")
 async  def get_read_author_category_by_query(book_author: str, category:str):
     book_return = []
@@ -54,5 +54,21 @@ async  def get_read_author_category_by_query(book_author: str, category:str):
             book_return.append(book)
     if not book_return: return {"error": "No books found for this author in this category"}
     return book_return
+
+
+# Create a new book using POST method
+@app.post("/booksList/create_book")
+async def create_book(new_book=Body()):
+    BOOKS.append(new_book)
+    return {"message": "Book created successfully", "book": new_book}
+
+
+# Update an existing book using PUT method
+@app.put("/booksList/update_book")
+async  def update_book(updated_book= Body()):
+    for i in range(len(BOOKS)):
+        if BOOKS[i].get('title').casefold() == updated_book.get('title').casefold():
+            BOOKS[i] = updated_book
+    return  {"message": "Book updated successfully", "book": updated_book}
 
 
