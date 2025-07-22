@@ -11,13 +11,15 @@ class Book:
     author:str
     description: str
     rating: int
-
-    def __init__(self, id: int, title: str, author: str, description: str, rating: int):
+    published_date:int
+    def __init__(self, id: int, title: str, author: str, description: str, rating: int, published_date: int):
         self.id = id
         self.title = title
         self.author = author
         self.description = description
         self.rating = rating
+        self.published_date = published_date
+
 
 class BookRequest(BaseModel):
     id: Optional[int] = Field(description='ID of the book, auto-generated if not provided', default=None)
@@ -25,26 +27,27 @@ class BookRequest(BaseModel):
     author: str = Field(min_length=3)
     description: str = Field(min_length=10, max_length=200)
     rating: int = Field(gt=0, lt=6)  # Rating must be between 1 and 5
-
+    published_date : int = Field(gt=1999, lt=2031)
     model_config = {
         "json_schema_extra": {
             "example": {
                 "title": "A New Book",
                 "author": "Name Of Author",
                 "description": "This is a description of the book.",
-                "rating": 5
+                "rating": 5,
+                'published_date':2029
             }
         }
     }
 
 # In-memory storage for books
 BOOKS = [
-    Book(1, "1984", "George Orwell", "Dystopian novel set in totalitarian society", 5),
-    Book(2, "To Kill a Mockingbird", "Harper Lee", "Novel about racial injustice in the Deep South", 4),
-    Book(3, "The Great Gatsby", "F. Scott Fitzgerald", "Story of the Jazz Age in the United States", 4),
-    Book(4, "Pride and Prejudice","Jane Austen", "Romantic novel about manners and marriage", 5),
-    Book(5, "The Catcher in the Rye", "J.D. Salinger", "Novel about teenage angst and alienation", 4),
-    Book(6, "Brave New World", "Aldous Huxley", "Dystopian novel about a technologically advanced future", 5)
+    Book(1, "1984", "George Orwell", "Dystopian novel set in totalitarian society", 5, 2001 ),
+    Book(2, "To Kill a Mockingbird", "Harper Lee", "Novel about racial injustice in the Deep South", 4 , 2010),
+    Book(3, "The Great Gatsby", "F. Scott Fitzgerald", "Story of the Jazz Age in the United States", 4 , 2001),
+    Book(4, "Pride and Prejudice","Jane Austen", "Romantic novel about manners and marriage", 5 , 2011),
+    Book(5, "The Catcher in the Rye", "J.D. Salinger", "Novel about teenage angst and alienation", 4 , 2023),
+    Book(6, "Brave New World", "Aldous Huxley", "Dystopian novel about a technologically advanced future", 5, 2015   )
 
 ]
 
@@ -85,8 +88,16 @@ async  def get_book_by_rating(book_rating: int):
         return {"error": "No books found with the specified rating"}
     return book_to_return
 
-
-
+#filter books by published date
+@app.get("/books/publish/")
+def get_book_by_published_date(published_date: int):
+    book_to_return = []
+    for book in BOOKS:
+        if book.published_date == published_date:
+            book_to_return.append(book)
+    if not  book_to_return:
+        return {"error": "No books found with the specified published date"}
+    return book_to_return
 
 
 
@@ -111,3 +122,25 @@ def find_book_id(book:Book):
     # else:
     #     book.id = 1
     return  book
+
+
+# Update a book id
+# @app.put("/books/update_book/{book_id}")
+# async def update_book(book: BookRequest):
+#     for b in range(len(BOOKS)):
+#     # Check if the book with the given ID exists
+#         if BOOKS[b].id == book.id:
+#             print(BOOKS[b])
+#             BOOKS[b] = Book(**book.model_dump())
+#
+
+#Delete a book by ID
+@app.delete("/books/{book_id}")
+async  def delete_book(book_id:int):
+    for b in range(len(BOOKS)):
+        if BOOKS[b].id == book_id:
+            BOOKS.pop(b)
+            break
+    return  {"message": "Book deleted successfully"}
+
+
