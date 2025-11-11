@@ -68,3 +68,49 @@ print("Get square of odd numbers: ", getSqureNumber)
 
 getEvenNumber = list(filter(lambda x: x%2 == 0, generate_number(10)))
 print('Get even number from generator:',getEvenNumber)
+
+
+# Handle exceptions in python
+
+try:
+    x = generate_number(4)
+    print(list(x))
+except ValueError:
+    print("Value Error occurred. Please provide a valid integer.")
+except ZeroDivisionError:
+    print("Division by zero is not allowed.")
+else:
+    print("Generation completed successfully.")
+finally:
+    print("Execution of the try-except block is complete.")
+
+data_list = []
+with open("file.txt", 'r', encoding='utf-8') as f:
+    data = f.read()
+    print(data)
+    for word in data.split():
+        data_list.append(word)
+
+print(data_list)
+
+# convert list as dictionary
+data_list_dict = [{'word': word, 'length': len(word)} for word in data_list]
+print(data_list_dict)
+
+# Create a filter dict with words length greater than 5
+filterDict= []
+def getFilterDict(len):
+    for item in data_list_dict:
+        if item['length'] > len:
+            filterDict.append(item)
+    return filterDict
+
+result = getFilterDict(5)
+print(result)
+
+result = getFilterDict(8)
+print(result)
+
+
+
+#[{'word': 'After', 'length': 5}, {'word': 'removing', 'length': 8}, {'word': 'even', 'length': 4}, {'word': 'numbers', 'length': 7}, {'word': 'Generation', 'length': 10}, {'word': 'completed', 'length': 9}, {'word': 'successfully.', 'length': 13}, {'word': 'Execution', 'length': 9}, {'word': 'of', 'length': 2}, {'word': 'the', 'length': 3}, {'word': 'try-except', 'length': 10}, {'word': 'block', 'length': 5}, {'word': 'is', 'length': 2}, {'word': 'complete.', 'length': 9}]
