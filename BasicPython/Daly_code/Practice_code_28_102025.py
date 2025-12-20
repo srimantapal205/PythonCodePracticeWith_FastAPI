@@ -8,5 +8,5 @@ lstDict = [
 print(type(lstDict))
 
 # Get only name inside a list
-nameList = [person['name'] for person in lstDict] 
+nameList = [(person['name'], person['age']) for person in lstDict]
 print(nameList)
